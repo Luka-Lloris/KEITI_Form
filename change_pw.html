@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8" />
+<title>비밀번호 변경</title>
+<body>
+  <h1>비밀번호 변경</h1>
+  <form id="f">
+    <label>새 비밀번호 <input name="pw1" type="password" required></label><br>
+    <label>새 비밀번호 확인 <input name="pw2" type="password" required></label><br>
+    <button>변경</button>
+  </form>
+  <script>
+    const API = 'https://YOUR-NAS-DOMAIN:8501/api';
+    document.getElementById('f').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const r = await fetch(API + '/change-password', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ pw1: fd.get('pw1'), pw2: fd.get('pw2') })
+      });
+      const j = await r.json();
+      if(!j.ok){ alert('실패: ' + (j.error||'')); return; }
+      alert('변경 완료');
+      location.href = 'home.html';
+    };
+  </script>
+</body>
+</html>
