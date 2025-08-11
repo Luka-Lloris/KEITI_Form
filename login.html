@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8" />
+<title>로그인</title>
+<body>
+  <h1>로그인</h1>
+  <form id="f">
+    <label>ID <input name="id" required></label><br>
+    <label>비밀번호 <input name="pw" type="password" required></label><br>
+    <button>로그인</button>
+  </form>
+  <script>
+    const API = 'https://YOUR-NAS-DOMAIN:8501/api';
+    document.getElementById('f').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const r = await fetch(API + '/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id: fd.get('id'), pw: fd.get('pw') })
+      });
+      const j = await r.json();
+      if(!j.ok){ alert('로그인 실패: ' + (j.error||'')); return; }
+      if(j.must_change_id){ location.href = 'set_id.html'; }
+      else if(j.must_change_pw){ location.href = 'change_pw.html'; }
+      else { location.href = 'home.html'; }
+    };
+  </script>
+</body>
+</html>
