@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8" />
+<title>ID 설정</title>
+<body>
+  <h1>ID 설정</h1>
+  <form id="f">
+    <label>새 ID <input name="new_id" required></label>
+    <button>저장</button>
+  </form>
+  <script>
+    const API = 'https://YOUR-NAS-DOMAIN:8501/api';
+    document.getElementById('f').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const r = await fetch(API + '/set-id', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ new_id: fd.get('new_id') })
+      });
+      const j = await r.json();
+      if(!j.ok){ alert('실패: ' + (j.error||'')); return; }
+      location.href = 'change_pw.html';
+    };
+  </script>
+</body>
+</html>
